@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, Volume2, Star, Sparkles, BookOpen } from "lucide-react";
+import { CheckCircle, XCircle, Volume2, Star, Sparkles, BookOpen, Headphones } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAudio } from "@/components/common/AudioContext";
 
@@ -44,10 +44,9 @@ export default function KidsQuizQuestion({ question, onAnswer, timeLeft }) {
 
   const handlePlayAyahRecitation = () => {
     console.log('[KidsQuizQuestion] 🎵 Attempting to play ayah');
-    console.log('[KidsQuizQuestion] Word data:', question?.word);
     
     if (!question?.word?.surah_number || !question?.word?.ayah_number) {
-      console.warn('[KidsQuizQuestion] ❌ Missing surah/ayah numbers for ayah recitation');
+      console.warn('[KidsQuizQuestion] ❌ Missing surah/ayah numbers');
       alert('⚠️ معلومات الآية غير متوفرة');
       return;
     }
@@ -60,7 +59,7 @@ export default function KidsQuizQuestion({ question, onAnswer, timeLeft }) {
     console.log('[KidsQuizQuestion] 🔵 Attempting to play word audio');
     
     if (!question?.word?.surah_number || !question?.word?.ayah_number || !question?.word?.word) {
-      console.warn('[KidsQuizQuestion] ❌ Missing surah/ayah/word for word audio');
+      console.warn('[KidsQuizQuestion] ❌ Missing data for word audio');
       alert('⚠️ معلومات الكلمة غير مكتملة');
       return;
     }
@@ -143,39 +142,56 @@ export default function KidsQuizQuestion({ question, onAnswer, timeLeft }) {
             </motion.h2>
 
             {/* أزرار الصوت الكبيرة */}
-            <div className="flex justify-center gap-4 mb-6">
+            <div className="flex justify-center gap-4 mb-6 flex-wrap">
               {/* 🟢 تلاوة الآية */}
-              <Button
-                size="lg"
-                onClick={handlePlayAyahRecitation}
-                className="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white gap-2 text-xl px-8 py-8 rounded-3xl shadow-2xl border-4 border-green-300 transform hover:scale-105 transition-all"
-              >
-                <Volume2 className="w-8 h-8" />
-                <span className="font-bold">🎵 استمع للآية</span>
-              </Button>
+              {question?.word?.surah_number && question?.word?.ayah_number && (
+                <Button
+                  size="lg"
+                  onClick={handlePlayAyahRecitation}
+                  className="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white gap-2 text-lg px-6 py-6 rounded-3xl shadow-2xl border-4 border-green-300 transform hover:scale-105 transition-all"
+                >
+                  <Volume2 className="w-7 h-7" />
+                  <span className="font-bold">🎵 استمع للآية</span>
+                </Button>
+              )}
 
-              {/* 🔵 نطق الكلمة */}
-              <Button
-                size="lg"
-                onClick={handlePlayWordAudio}
-                className="bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white gap-2 text-xl px-8 py-8 rounded-3xl shadow-2xl border-4 border-blue-300 transform hover:scale-105 transition-all"
-              >
-                <Volume2 className="w-8 h-8" />
-                <span className="font-bold">🗣️ نطق الكلمة</span>
-              </Button>
+              {/* 🔵 نطق الكلمة - سماعة بدل الشخص */}
+              {question?.word?.surah_number && question?.word?.ayah_number && (
+                <Button
+                  size="lg"
+                  onClick={handlePlayWordAudio}
+                  className="bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white gap-2 text-lg px-6 py-6 rounded-3xl shadow-2xl border-4 border-blue-300 transform hover:scale-105 transition-all"
+                >
+                  <Headphones className="w-7 h-7" />
+                  <span className="font-bold">نطق الكلمة</span>
+                </Button>
+              )}
             </div>
 
-            {/* ✅ نص الآية مع رقمها */}
+            {/* ✅ نص الآية مع رقمها وزر صوت */}
             {question?.word?.context_snippet && (
               <div className="mt-6 p-6 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/30 rounded-2xl border-4 border-amber-300 dark:border-amber-700 shadow-lg">
-                <div className="flex items-center justify-center gap-2 mb-3">
-                  <BookOpen className="w-5 h-5 text-amber-700 dark:text-amber-400" />
-                  <h4 className="text-sm font-bold text-amber-800 dark:text-amber-300">
-                    📖 الآية الكريمة
-                  </h4>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-amber-700 dark:text-amber-400" />
+                    <h4 className="text-sm font-bold text-amber-800 dark:text-amber-300">
+                      📖 الآية الكريمة
+                    </h4>
+                  </div>
+                  
+                  {/* زر صوت الآية */}
+                  <Button
+                    onClick={handlePlayAyahRecitation}
+                    size="sm"
+                    variant="outline"
+                    className="border-2 border-amber-400 hover:bg-amber-100"
+                  >
+                    <Volume2 className="w-4 h-4 ml-1" />
+                    استمع
+                  </Button>
                 </div>
                 
-                <p className="text-2xl text-amber-900 dark:text-amber-200 arabic-font leading-relaxed mb-3 font-semibold">
+                <p className="text-xl text-amber-900 dark:text-amber-200 arabic-font leading-relaxed mb-3 font-semibold">
                   {question.word.context_snippet}
                 </p>
                 
@@ -195,7 +211,7 @@ export default function KidsQuizQuestion({ question, onAnswer, timeLeft }) {
             )}
           </div>
 
-          {/* الخيارات */}
+          {/* الخيارات - مع مربعات أكبر */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {question?.options?.map((option, index) => {
               const isSelected = selectedAnswer === option.meaning;
@@ -219,7 +235,7 @@ export default function KidsQuizQuestion({ question, onAnswer, timeLeft }) {
                     onClick={() => !hasAnswered && handleAnswerSelect(option.meaning)}
                     disabled={hasAnswered}
                     className={`
-                      w-full min-h-[120px] text-2xl p-6 rounded-3xl font-bold shadow-2xl transition-all duration-300 border-4
+                      w-full min-h-[140px] text-xl p-6 rounded-3xl font-bold shadow-2xl transition-all duration-300 border-4
                       ${!hasAnswered ? `bg-gradient-to-br ${colors[index]} text-white hover:shadow-3xl` : ''}
                       ${isCorrect ? 'bg-gradient-to-br from-green-500 to-green-600 text-white scale-110 ring-8 ring-green-300 border-green-400' : ''}
                       ${isWrong ? 'bg-gradient-to-br from-red-500 to-red-600 text-white scale-95 border-red-400' : ''}
@@ -227,8 +243,8 @@ export default function KidsQuizQuestion({ question, onAnswer, timeLeft }) {
                     `}
                   >
                     <span className="flex items-center justify-between w-full gap-4">
-                      <span className="flex-1 text-right leading-relaxed">{option.meaning}</span>
-                      <div className="flex items-center gap-3">
+                      <span className="flex-1 text-right leading-relaxed break-words">{option.meaning}</span>
+                      <div className="flex items-center gap-3 flex-shrink-0">
                         {isCorrect && (
                           <CheckCircle className="w-10 h-10 animate-bounce" />
                         )}
@@ -244,7 +260,7 @@ export default function KidsQuizQuestion({ question, onAnswer, timeLeft }) {
                             e.stopPropagation();
                             handlePlayMeaningAudio(option.meaning);
                           }}
-                          className="h-12 w-12 hover:bg-white/30 rounded-full"
+                          className="h-12 w-12 hover:bg-white/30 rounded-full flex-shrink-0"
                         >
                           <Volume2 className="w-6 h-6" />
                         </Button>
